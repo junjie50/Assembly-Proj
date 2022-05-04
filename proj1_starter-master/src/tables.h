@@ -15,7 +15,6 @@ extern const int SYMTBL_UNIQUE_NAME;     // duplicate names not allowed
 typedef struct {
     char *name;
     uint32_t addr;
-    void *next;
 } Symbol;
 
 typedef struct {

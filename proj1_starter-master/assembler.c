@@ -121,93 +121,7 @@ static int add_if_label(uint32_t input_line, char* str, uint32_t byte_offset,
  */
 int pass_one(FILE* input, FILE* output, SymbolTable* symtbl) {
     /* YOUR CODE HERE */
-    int error = 0;
-    int line = 0;
-    int byteoff = 0;
-    char buf[BUF_SIZE];
-    while(fgets(buf, BUF_SIZE, input)) {
-
-        // SKipping the new line character taken in by the fgets
-        size_t len = strlen(buf);
-        if(buf[len - 1] == '\n') {
-            buf[len - 1] = '\0';
-        }
-
-        // Skip all the comments in the line received
-        skip_comment(buf);
-        line ++;
-
-        //printf("String: %s\n", buf);
-
-        // If is empty line skip it
-        char *tok = strtok(buf, IGNORE_CHARS);
-        if(!tok) {
-            continue;
-        }
-        //printf("tok: %s\n", tok);
-
-        int err = add_if_label(line, tok, byteoff, symtbl);
-        //Invalid label
-        if(err == -1) {
-            error = 1;
-            printf("error: label wrong");
-            continue;
-        }
-
-        // Not a Label
-        if (err == 0) {
-            char *instr = tok;
-            char *args[MAX_ARGS];
-            int curr = 0;
-            while((tok = strtok(NULL, IGNORE_CHARS)) && curr < MAX_ARGS ) {
-                //printf("err0 tok: %s\n", tok);
-                args[curr] = tok;
-                curr ++;
-            }
-            if(curr == MAX_ARGS && tok != NULL){
-                raise_extra_arg_error(line, tok);
-                error = 1;
-                continue;
-            }
-
-            byteoff += write_pass_one(output, instr, args, curr) * 4;
-            
-        }
-        // Is a label
-        else if (err == 1) {
-            tok = strtok(NULL, IGNORE_CHARS);
-            if(!tok){
-                continue;
-            }
-            // Multiple label error
-            int len = strlen(tok);
-            if(tok[len-1] == ':') {
-                //printf("MUltiple label error\n");
-                continue;
-            }
-
-            char *instr = tok;
-            char *args[MAX_ARGS];
-            int curr = 0;
-            while((tok = strtok(NULL, IGNORE_CHARS)) && curr < MAX_ARGS) {
-                //printf("err1 tok: %s\n", tok);
-                args[curr] = tok;
-                curr ++;
-            }
-            if(curr == MAX_ARGS && tok != NULL){
-                raise_extra_arg_error(line, tok);
-                error = 1;
-                continue;
-            }
-
-            byteoff += write_pass_one(output, instr, args, curr)*4;
-        }
-    }
-
-    if(error){
-        return -1;
-    }
-    return 0;
+    return -1;
 }
 
 /* Reads an intermediate file and translates it into machine code. You may assume:
@@ -225,61 +139,25 @@ int pass_two(FILE *input, FILE* output, SymbolTable* symtbl, SymbolTable* reltbl
     // Since we pass this buffer to strtok(), the chars here will GET CLOBBERED.
     char buf[BUF_SIZE];
     // Store input line number / byte offset below. When should each be incremented?
-    int line = 0;
-    int byteoff = 0;
-    int error = 0;
 
     // First, read the next line into a buffer.
-    while(fgets(buf, BUF_SIZE, input)){
-        // Clear the '\n' character for the line
-        int buflen = strlen(buf);
-        if(buf[buflen - 1] == '\n') {
-            buf[buflen - 1] = '\0';
-        }
-        printf("String: %s\n", buf);
 
-        line ++;
-        // Next, use strtok() to scan for next character. If there's nothing,
-        // go to the next line.
-        char *tok;
-        tok = strtok(buf," ");
-        if(tok == NULL) {
-            continue;
-        }
-        printf("Tok: %s\n", tok);
-        // Parse for instruction arguments. You should use strtok() to tokenize
-        // the rest of the line. Extra arguments should be filtered out in pass_one(),
-        // so you don't need to worry about that here.
+    // Next, use strtok() to scan for next character. If there's nothing,
+    // go to the next line.
 
-        char *args[30];
-        int num_args = 0;
-        char *instr = tok;
-        while((tok = strtok(NULL, " "))){
-            printf("Tok: %s\n", tok);
-            args[num_args] = tok;
-            num_args ++;
-        }
+    // Parse for instruction arguments. You should use strtok() to tokenize
+    // the rest of the line. Extra arguments should be filtered out in pass_one(),
+    // so you don't need to worry about that here.
+    char* args[MAX_ARGS];
+    int num_args = 0;
 
-        // Use translate_inst() to translate the instruction and write to output file.
-        // If an error occurs, the instruction will not be written and you should call
-        // raise_inst_error(). 
-
-        if(translate_inst(output, instr, args, num_args, byteoff, symtbl, reltbl) == 1){
-            raise_inst_error(line, instr, args, num_args);
-            error = 1;
-        }
-        else {
-            byteoff += 4;
-        }
-
-    }
+    // Use translate_inst() to translate the instruction and write to output file.
+    // If an error occurs, the instruction will not be written and you should call
+    // raise_inst_error(). 
 
     // Repeat until no more characters are left, and the return the correct return val
 
-    if(error) {
-            return -1;
-    }
-    return 0;
+    return -1;
 }
 
 /*******************************

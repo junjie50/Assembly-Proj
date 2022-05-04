@@ -42,33 +42,12 @@ void write_symbol(FILE* output, uint32_t addr, const char* name) {
  */
 SymbolTable* create_table(int mode) {
     /* YOUR CODE HERE */
-    SymbolTable *newTable = malloc(sizeof(SymbolTable));
-    if(newTable == NULL) {
-        return NULL;
-    }
-    newTable->mode = mode;
-    newTable->len = 0;
-    newTable->tbl = NULL;
-    newTable->cap = 0;
-    return newTable;
+    return NULL;
 }
 
-
-void helper(Symbol *curr) {
-    if(curr->next != NULL){
-        helper(curr->next);
-    }
-    free(curr->name);
-    free(curr);
-}
 /* Frees the given SymbolTable and all associated memory. */
 void free_table(SymbolTable* table) {
-
-    if(table == NULL || table->tbl == NULL){
-        return;
-    }
-    helper(table->tbl);
-    free(table);
+    /* YOUR CODE HERE */
 }
 
 /* Adds a new symbol and its address to the SymbolTable pointed to by TABLE. 
@@ -86,60 +65,8 @@ void free_table(SymbolTable* table) {
    Otherwise, you should store the symbol name and address and return 0.
  */
 int add_to_table(SymbolTable* table, const char* name, uint32_t addr) {
-    if(addr % 4 != 0) {
-        addr_alignment_incorrect();
-        return -1;
-    }
-    Symbol *curr =table->tbl;
-    if(curr == NULL) {
-        Symbol *insert = malloc(sizeof(Symbol));
-        if (insert == NULL) {
-            allocation_failed();
-        }
-        insert->addr = addr;
-        int len = strlen(name);
-        char *nameInsert = malloc(len + 1);
-        int i = 0;
-        while(name[i] != '\0') {
-            nameInsert[i] = name[i];
-            i ++;
-        }
-        nameInsert[i] = name[i];
-        insert->name = nameInsert;
-        insert->next = NULL;
-        table->tbl = insert;
-    }
-    else {
-        Symbol* prev = NULL;
-        while(curr != NULL) {
-            if(strcmp(curr->name, name) == 0 && table->mode) {
-                name_already_exists(name);
-                return -1;
-            }
-            prev = curr;
-            curr = curr->next;
-        }
-
-        Symbol *insert = malloc(sizeof(Symbol));
-        if(insert == NULL) {
-            allocation_failed();
-            return -1;
-        }
-        insert->addr = addr;
-        int len = strlen(name);
-        char *nameInsert = malloc(len + 1);
-        int i = 0;
-        while(name[i] != '\0') {
-            nameInsert[i] = name[i];
-            i ++;
-        }
-        nameInsert[i] = name[i];
-        insert->name = nameInsert;
-        insert->next = NULL;
-        prev->next = insert;
-    }
-    table->len = table->len + 1;
-    return 0;
+    /* YOUR CODE HERE */
+    return -1;
 }
 
 /* Returns the address (byte offset) of the given symbol. If a symbol with name
@@ -147,14 +74,7 @@ int add_to_table(SymbolTable* table, const char* name, uint32_t addr) {
  */
 int64_t get_addr_for_symbol(SymbolTable* table, const char* name) {
     /* YOUR CODE HERE */
-    Symbol *curr = table->tbl;
-    while(curr != NULL){
-        if(strcmp(curr->name, name) == 0) {
-            return curr->addr;
-        }
-        curr = curr->next;
-    }
-    return -1;
+    return -1;   
 }
 
 /* Writes the SymbolTable TABLE to OUTPUT. You should use write_symbol() to
@@ -162,9 +82,4 @@ int64_t get_addr_for_symbol(SymbolTable* table, const char* name) {
  */
 void write_table(SymbolTable* table, FILE* output) {
     /* YOUR CODE HERE */
-    Symbol *curr = table->tbl;
-    while(curr != NULL) {
-        write_symbol(output, curr->addr, curr->name);
-        curr = curr->next;
-    }
 }
